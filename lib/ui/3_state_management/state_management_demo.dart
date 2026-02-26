@@ -17,9 +17,11 @@ class _DartDemoScreenState extends State<StateManagementDemo> {
     Colors.deepPurple, 
     Colors.red
   ];
-  int colorIndex = 0;
+  // int colorIndex = 0;
+  final colorIndexNotifier = ValueNotifier(0);
 
-  int number = 1;
+  // int number = 1;
+  final numberNotifier = ValueNotifier<int>(1);
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +31,20 @@ class _DartDemoScreenState extends State<StateManagementDemo> {
         child: Column(
           children: [
             const SizedBox(height:20),
-              Container(color: colors[colorIndex], width:200, height:200,
-                child: Center(
-                  child: Text('$number', style: TextStyle(fontSize: 50)),
-                ),
+              ValueListenableBuilder(
+                valueListenable: colorIndexNotifier,
+                builder: (context, colorIndex, child) {
+                  return Container(color: colors[colorIndex], width:200, height:200,
+                    child: Center(
+                      child: ValueListenableBuilder(
+                        valueListenable: numberNotifier,
+                        builder: (context, value, child) {
+                          return Text('$value', style: TextStyle(fontSize: 50));
+                        }
+                      ),
+                    ),
+                  );
+                }
               ),
             
             const SizedBox(height:20),
@@ -45,16 +57,11 @@ class _DartDemoScreenState extends State<StateManagementDemo> {
     );
   }    
   void changeColor() {
-    setState(() {
-      colorIndex++;
-      colorIndex = colorIndex % colors.length;
-      print(colorIndex);
-    });
+      colorIndexNotifier.value++;
+      colorIndexNotifier.value = colorIndexNotifier.value % colors.length;
   }  
 
   void changeText() {
-    setState(() {
-      number= number+1;
-    });
+      numberNotifier.value++;
   }
 }
